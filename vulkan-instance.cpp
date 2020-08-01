@@ -79,8 +79,8 @@ namespace Vulkan
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
             throw std::runtime_error("Failed to create Vulkan instance.");
 
-        State::instance = this;
-        APPLICATION_LOG("Create Vulkan Instance.");
+        State::setInstance(this);
+        APPLICATION_LOG("Created Vulkan Instance.");
     }
 
     Instance::~Instance()

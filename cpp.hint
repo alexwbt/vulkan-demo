@@ -1,0 +1,1 @@
+#define STATE_GETTER_SETTER(name, member) State::get##name(){ return(##member->get##name());}void State::set##name(##name*##member){ if (##member != nullptr) throw std::runtime_error(#member); State::member = member;}

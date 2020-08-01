@@ -27,7 +27,7 @@ namespace Vulkan
                 indices.graphicsFamily = i;
 
             VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, State::surface->getSurface(), &presentSupport);
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, State::getSurface(), &presentSupport);
             if (presentSupport)
                 indices.presentFamily = i;
 
@@ -63,12 +63,12 @@ namespace Vulkan
         physicalDevice = VK_NULL_HANDLE;
 
         uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(State::instance->getInstance(), &deviceCount, nullptr);
+        vkEnumeratePhysicalDevices(State::getInstance(), &deviceCount, nullptr);
         if (deviceCount == 0)
             throw std::runtime_error("Failed to find GPU with Vulkan support.");
 
         std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(State::instance->getInstance(), &deviceCount, devices.data());
+        vkEnumeratePhysicalDevices(State::getInstance(), &deviceCount, devices.data());
 
         for (const auto& device : devices)
             if (isDeviceSuitable(device))
@@ -80,7 +80,7 @@ namespace Vulkan
         if (physicalDevice == VK_NULL_HANDLE)
             throw std::runtime_error("Failed to find a suitable GPU.");
 
-        State::physicalDevice = this;
+        State::setPhysicalDevice(this);
         APPLICATION_LOG("Selected Physical Device.")
     }
 

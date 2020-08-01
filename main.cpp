@@ -17,6 +17,12 @@ int main()
         Surface surface;
         PhysicalDevice physicalDevice;
 
+        while (Window::update())
+        {
+
+        }
+
+        Window::terminate();
     }
     catch (const std::exception& e)
     {

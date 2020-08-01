@@ -19,6 +19,19 @@ void Window::initWindow(int width, int height, const char* title)
     Window::height = height;
 }
 
+bool Window::update()
+{
+    glfwPollEvents();
+
+    return !glfwWindowShouldClose(window);
+}
+
+void Window::terminate()
+{
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
 void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height)
 {
     Window::width = width;

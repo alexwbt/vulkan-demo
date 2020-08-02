@@ -5,6 +5,9 @@ namespace Vulkan
 {
     Surface::Surface()
     {
+        if (Window::window == nullptr)
+            throw std::runtime_error("Tried to create surface before window initialization.");
+
         if (glfwCreateWindowSurface(State::getInstance(), Window::window, nullptr, &surface) != VK_SUCCESS)
             throw std::runtime_error("Failed to create window surface.");
 

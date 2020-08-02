@@ -1,15 +1,19 @@
 #include "window.h"
 
-#include <iostream>
+#include <stdexcept>
 
-GLFWwindow* Window::window;
+GLFWwindow* Window::window = nullptr;
 bool Window::resized = false;
 int Window::width = -1;
 int Window::height = -1;
 
 void Window::initialize(int width, int height, const char* title)
 {
-    glfwInit();
+    if (window != nullptr)
+        throw std::runtime_error("Multiple window initialization disabled.");
+
+    if (glfwInit() != GLFW_TRUE)
+        throw std::runtime_error("Failed to initialize GLFW.");
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Tell GLFW to not create an OpenGL context.
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // Disable resizing window.

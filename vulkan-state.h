@@ -6,6 +6,7 @@
 #include "vulkan-surface.h"
 #include "vulkan-physical-device.h"
 #include "vulkan-device.h"
+#include "vulkan-swapchain.h"
 
 #include <vector>
 #include <optional>
@@ -41,20 +42,30 @@ namespace Vulkan
     {
     public:
         STATE_GETTER_SETTER_H(Instance, instance, VkInstance);
+
         STATE_GETTER_SETTER_H(Surface, surface, VkSurfaceKHR);
+
         STATE_GETTER_SETTER_H(PhysicalDevice, physicalDevice, VkPhysicalDevice);
+
         STATE_GETTER_SETTER_H(Device, device, VkDevice);
         static VkQueue* getGraphicsQueue();
         static VkQueue* getPresentQueue();
+
+        STATE_GETTER_SETTER_H(Device, device, VkDevice);
 
         static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice physicalDevice);
 
     private:
         static Instance* instance;
+
         static Surface* surface;
+
         static PhysicalDevice* physicalDevice;
+
         static Device* device;
         static VkQueue graphicsQueue;
         static VkQueue presentQueue;
+
+        static Swapchain swapchain;
     };
 }

@@ -1,9 +1,5 @@
-#include "configuration-macro.h"
-
 #include "vulkan-state.h"
 #include "window.h"
-
-#include <stdexcept>
 
 namespace Vulkan
 {
@@ -13,14 +9,13 @@ namespace Vulkan
             throw std::runtime_error("Failed to create window surface.");
 
         State::setSurface(this);
-        APPLICATION_LOG("Created Surface.")
+        APPLICATION_LOG("Created Surface.");
     }
 
     Surface::~Surface()
     {
         vkDestroySurfaceKHR(State::getInstance(), surface, nullptr);
-
-        APPLICATION_LOG("Destroyed Surface.")
+        APPLICATION_LOG("Destroyed Surface.");
     }
 
     VkSurfaceKHR& Surface::getSurface()

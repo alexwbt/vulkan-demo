@@ -1,11 +1,13 @@
 #include "window.h"
 
+#include <iostream>
+
 GLFWwindow* Window::window;
 bool Window::resized = false;
 int Window::width = -1;
 int Window::height = -1;
 
-void Window::initWindow(int width, int height, const char* title)
+void Window::initialize(int width, int height, const char* title)
 {
     glfwInit();
 
@@ -22,7 +24,6 @@ void Window::initWindow(int width, int height, const char* title)
 bool Window::update()
 {
     glfwPollEvents();
-
     return !glfwWindowShouldClose(window);
 }
 

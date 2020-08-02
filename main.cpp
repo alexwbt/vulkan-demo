@@ -1,9 +1,5 @@
-#include <iostream>
-
 #include "window.h"
-#include "vulkan-instance.h"
-#include "vulkan-surface.h"
-#include "vulkan-physical-device.h"
+#include "vulkan-state.h"
 
 using namespace Vulkan;
 
@@ -11,11 +7,12 @@ int main()
 {
     try
     {
-        Window::initWindow(800, 600, "Vulkan Demo");
+        Window::initialize(800, 600, "Vulkan Demo");
 
         Instance instance;
         Surface surface;
         PhysicalDevice physicalDevice;
+        Device device;
 
         while (Window::update())
         {

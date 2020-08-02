@@ -1,18 +1,10 @@
-#include "configuration-macro.h"
 #include "vulkan-state.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <vector>
-#include <stdexcept>
-
 namespace Vulkan
 {
-    const std::vector<const char*> requiredLayers = {
-        "VK_LAYER_KHRONOS_validation"
-    };
-
     bool checkValidationLayerSupport()
     {
         uint32_t layerCount;
@@ -57,9 +49,9 @@ namespace Vulkan
         std::vector<VkExtensionProperties> extensions(extensionCount);
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-        APPLICATION_LOG("available extensions:")
+        APPLICATION_LOG("available extensions:");
         for (const auto& extension : extensions)
-            APPLICATION_LOG('\t' << extension.extensionName)
+            APPLICATION_LOG('\t' << extension.extensionName);
 #endif
 
         VkInstanceCreateInfo createInfo{};
@@ -67,14 +59,15 @@ namespace Vulkan
         createInfo.pApplicationInfo = &appInfo;
         createInfo.enabledExtensionCount = glfwExtensionCount;
         createInfo.ppEnabledExtensionNames = glfwExtensions;
-        if (ENABLE_VALIDATION_LAYERS)
-        {
-            if (!checkValidationLayerSupport())
-                throw std::runtime_error("validation layers requested, but not available!");
-            createInfo.enabledLayerCount = static_cast<uint32_t>(requiredLayers.size());
-            createInfo.ppEnabledLayerNames = requiredLayers.data();
-        }
-        else createInfo.enabledLayerCount = 0;
+
+#ifdef ENABLE_VALIDATION_LAYERS
+        if (!checkValidationLayerSupport())
+            throw std::runtime_error("validation layers requested, but not available!");
+        createInfo.enabledLayerCount = static_cast<uint32_t>(requiredLayers.size());
+        createInfo.ppEnabledLayerNames = requiredLayers.data();
+#else
+        createInfo.enabledLayerCount = 0;
+#endif
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
             throw std::runtime_error("Failed to create Vulkan instance.");
@@ -86,8 +79,7 @@ namespace Vulkan
     Instance::~Instance()
     {
         vkDestroyInstance(instance, nullptr);
-
-        APPLICATION_LOG("Destroyed Vulkan Instance.")
+        APPLICATION_LOG("Destroyed Vulkan Instance.");
     }
 
     VkInstance& Instance::getInstance()

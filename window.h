@@ -9,7 +9,7 @@ public:
     static bool resized;
     static int width, height;
 
-    static void initWindow(int width, int height, const char* title);
+    static void initialize(int width, int height, const char* title);
     static bool update();
     static void terminate();
 private:

@@ -1,43 +1,7 @@
-#include "configuration-macro.h"
 #include "vulkan-state.h"
-
-#include <set>
-#include <vector>
-#include <stdexcept>
 
 namespace Vulkan
 {
-    const std::vector<const char*> requiredExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
-    };
-
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
-    {
-        QueueFamilyIndices indices;
-
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-        for (uint32_t i = 0; i < queueFamilyCount; i++)
-        {
-            if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-                indices.graphicsFamily = i;
-
-            VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, State::getSurface(), &presentSupport);
-            if (presentSupport)
-                indices.presentFamily = i;
-
-            if (indices.isComplete())
-                break;
-        }
-
-        return indices;
-    }
-
     bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice)
     {
         uint32_t extensionCount;
@@ -54,7 +18,7 @@ namespace Vulkan
 
     bool isDeviceSuitable(VkPhysicalDevice physicalDevice)
     {
-        return findQueueFamilies(physicalDevice).isComplete()
+        return State::findQueueFamilies(physicalDevice).isComplete()
             && checkDeviceExtensionSupport(physicalDevice);
     }
 
@@ -81,7 +45,7 @@ namespace Vulkan
             throw std::runtime_error("Failed to find a suitable GPU.");
 
         State::setPhysicalDevice(this);
-        APPLICATION_LOG("Selected Physical Device.")
+        APPLICATION_LOG("Selected Physical Device.");
     }
 
     VkPhysicalDevice& PhysicalDevice::getPhysicalDevice()

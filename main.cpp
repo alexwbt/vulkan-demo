@@ -1,6 +1,8 @@
 #include "window.h"
 #include "vulkan-state.h"
 
+#include <iostream>
+
 using namespace Vulkan;
 
 int main()

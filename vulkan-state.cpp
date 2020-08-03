@@ -4,7 +4,7 @@
 returnType& State::get##name()\
 {\
     if (##member == nullptr)\
-        throw std::runtime_error("Failed to get state." #member " is undefined.");\
+        throw std::runtime_error("Failed to get state. (" #member " is undefined)");\
     return(##member->get##name());\
 }\
 void State::set##name(##name* ##member)\

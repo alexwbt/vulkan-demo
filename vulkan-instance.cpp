@@ -43,7 +43,7 @@ namespace Vulkan
         const char** glfwExtensions;
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-#ifdef CONFIGURATION_ENABLE_LOGGIN
+#ifdef CONFIGURATION_ENABLE_LOGGING
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
         std::vector<VkExtensionProperties> extensions(extensionCount);

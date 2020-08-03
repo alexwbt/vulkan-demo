@@ -4,7 +4,7 @@ namespace Vulkan
 {
     Device::Device()
     {
-        QueueFamilyIndices indices = State::findQueueFamilies(State::getPhysicalDevice());
+        QueueFamilyIndices indices = findQueueFamilies(State::getPhysicalDevice());
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {

@@ -13,6 +13,7 @@ int main()
         Surface surface;
         PhysicalDevice physicalDevice;
         Device device;
+        Swapchain swapchain;
 
         while (Window::update())
         {

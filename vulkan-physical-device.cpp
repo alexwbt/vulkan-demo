@@ -2,6 +2,33 @@
 
 namespace Vulkan
 {
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice physicalDevice)
+    {
+        QueueFamilyIndices indices;
+
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
+
+        for (uint32_t i = 0; i < queueFamilyCount; i++)
+        {
+            if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+                indices.graphicsFamily = i;
+
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, State::getSurface(), &presentSupport);
+            if (presentSupport)
+                indices.presentFamily = i;
+
+            if (indices.isComplete())
+                break;
+        }
+
+        return indices;
+    }
+
     bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice)
     {
         uint32_t extensionCount;
@@ -18,7 +45,7 @@ namespace Vulkan
 
     bool isDeviceSuitable(VkPhysicalDevice physicalDevice)
     {
-        return State::findQueueFamilies(physicalDevice).isComplete()
+        return findQueueFamilies(physicalDevice).isComplete()
             && checkDeviceExtensionSupport(physicalDevice);
     }
 

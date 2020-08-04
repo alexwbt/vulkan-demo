@@ -29,8 +29,4 @@ namespace Vulkan
     STATE_GETTER_SETTER(PhysicalDevice, physicalDevice, VkPhysicalDevice);
     STATE_GETTER_SETTER(Device, device, VkDevice);
     STATE_GETTER_SETTER(Swapchain, swapchain, VkSwapchainKHR);
-    VkFormat State::swapchainImageFormat;
-    VkExtent2D State::swapchainExtent;
-    VkFormat* State::getSwapchainImageFormat() { return &swapchainImageFormat; }
-    VkExtent2D* State::getSwapchainExtent() { return &swapchainExtent; }
 }

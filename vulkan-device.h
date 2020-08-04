@@ -11,8 +11,6 @@ namespace Vulkan
         ~Device();
 
         VkDevice& getDevice();
-        VkQueue* getGraphicsQueue();
-        VkQueue* getPresentQueue();
     private:
         VkDevice device;
         VkQueue graphicsQueue;

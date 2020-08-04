@@ -36,8 +36,6 @@ namespace Vulkan
         STATE_GETTER_SETTER_H(PhysicalDevice, physicalDevice, VkPhysicalDevice);
         STATE_GETTER_SETTER_H(Device, device, VkDevice);
         STATE_GETTER_SETTER_H(Swapchain, swapchain, VkSwapchainKHR);
-        static VkFormat* getSwapchainImageFormat();
-        static VkExtent2D* getSwapchainExtent();
 
     private:
         static Instance* instance;
@@ -45,7 +43,5 @@ namespace Vulkan
         static PhysicalDevice* physicalDevice;
         static Device* device;
         static Swapchain* swapchain;
-        static VkFormat swapchainImageFormat;
-        static VkExtent2D swapchainExtent;
     };
 }

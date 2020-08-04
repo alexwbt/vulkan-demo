@@ -14,6 +14,7 @@
 #include <stdexcept>
 
 #define STATE_GETTER_SETTER_H(name, member, returnType)\
+static name* member##Obj();\
 static returnType& get##name();\
 static void set##name(name* member);
 
@@ -34,8 +35,6 @@ namespace Vulkan
         STATE_GETTER_SETTER_H(Surface, surface, VkSurfaceKHR);
         STATE_GETTER_SETTER_H(PhysicalDevice, physicalDevice, VkPhysicalDevice);
         STATE_GETTER_SETTER_H(Device, device, VkDevice);
-        static VkQueue* getGraphicsQueue();
-        static VkQueue* getPresentQueue();
         STATE_GETTER_SETTER_H(Swapchain, swapchain, VkSwapchainKHR);
         static VkFormat* getSwapchainImageFormat();
         static VkExtent2D* getSwapchainExtent();
@@ -45,8 +44,6 @@ namespace Vulkan
         static Surface* surface;
         static PhysicalDevice* physicalDevice;
         static Device* device;
-        static VkQueue graphicsQueue;
-        static VkQueue presentQueue;
         static Swapchain* swapchain;
         static VkFormat swapchainImageFormat;
         static VkExtent2D swapchainExtent;

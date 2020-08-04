@@ -1,2 +1,1 @@
-#define STATE_GETTER_SETTER(name, member, returnType) name* State::member = nullptr;returnType& State::get##name(){ if (##member == nullptr) throw std::runtime_error("Failed to get state." #member " is undefined."); return(##member->get##name());}void State::set##name(##name*##member){ if (State::member != nullptr) throw std::runtime_error("State shouldn't be set more than one time. (" #member ")"); State::member = member;}
-#define STATE_GETTER_SETTER_H(name, member, returnType) static returnType& get##name();static void set##name(name* member);
+static void set##name(name* member);#define STATE_GETTER_SETTER_H(name, member, returnType) static returnType& member##Obj();static name* State::get##name();static void set##name(name* member);

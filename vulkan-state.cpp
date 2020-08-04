@@ -1,6 +1,13 @@
 #include "vulkan-state.h"
 
-#define STATE_GETTER_SETTER(name, member, returnType) name* State::member = nullptr;\
+#define STATE_GETTER_SETTER(name, member, returnType)\
+name* State::member = nullptr;\
+name* State::member##Obj()\
+{\
+    if (##member == nullptr)\
+        throw std::runtime_error("Failed to get state. (" #member " is undefined)");\
+    return member;\
+}\
 returnType& State::get##name()\
 {\
     if (##member == nullptr)\
@@ -21,10 +28,6 @@ namespace Vulkan
     STATE_GETTER_SETTER(Surface, surface, VkSurfaceKHR);
     STATE_GETTER_SETTER(PhysicalDevice, physicalDevice, VkPhysicalDevice);
     STATE_GETTER_SETTER(Device, device, VkDevice);
-    VkQueue State::graphicsQueue;
-    VkQueue State::presentQueue;
-    VkQueue* State::getGraphicsQueue() { return &graphicsQueue; }
-    VkQueue* State::getPresentQueue() { return &presentQueue; }
     STATE_GETTER_SETTER(Swapchain, swapchain, VkSwapchainKHR);
     VkFormat State::swapchainImageFormat;
     VkExtent2D State::swapchainExtent;

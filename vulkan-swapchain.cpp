@@ -89,7 +89,6 @@ namespace Vulkan
 
         QueueFamilyIndices indices = findQueueFamilies(State::getPhysicalDevice());
         uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
-
         if (indices.graphicsFamily != indices.presentFamily)
         {
             createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;

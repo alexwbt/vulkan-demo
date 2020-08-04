@@ -13,5 +13,7 @@ namespace Vulkan
         VkSwapchainKHR& getSwapchain();
     private:
         VkSwapchainKHR swapchain;
+        std::vector<VkImage> images;
+        std::vector<VkImageView> imageViews;
     };
 }

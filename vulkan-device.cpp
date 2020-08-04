@@ -42,8 +42,8 @@ namespace Vulkan
         if (vkCreateDevice(State::getPhysicalDevice(), &createInfo, nullptr, &device) != VK_SUCCESS)
             throw std::runtime_error("Failed to create logical device.");
 
-        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, State::getGraphicsQueue());
-        vkGetDeviceQueue(device, indices.presentFamily.value(), 0, State::getPresentQueue());
+        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+        vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 
         State::setDevice(this);
         APPLICATION_LOG("Created Device.");
@@ -55,8 +55,7 @@ namespace Vulkan
         APPLICATION_LOG("Destroyed Device.");
     }
 
-    VkDevice& Device::getDevice()
-    {
-        return device;
-    }
+    VkDevice& Device::getDevice() { return device; }
+    VkQueue* Device::getGraphicsQueue() { return &graphicsQueue; }
+    VkQueue* Device::getPresentQueue() { return &presentQueue; }
 }

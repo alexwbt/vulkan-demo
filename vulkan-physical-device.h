@@ -24,7 +24,7 @@ namespace Vulkan
     public:
         PhysicalDevice();
 
-        VkPhysicalDevice& getPhysicalDevice();
+        VkPhysicalDevice getPhysicalDevice();
     private:
         VkPhysicalDevice physicalDevice;
     };

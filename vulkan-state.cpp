@@ -8,7 +8,7 @@ name* State::member##Obj()\
         throw std::runtime_error("Failed to get state. (" #member " is undefined)");\
     return member;\
 }\
-returnType& State::get##name()\
+returnType State::get##name()\
 {\
     if (##member == nullptr)\
         throw std::runtime_error("Failed to get state. (" #member " is undefined)");\
@@ -23,10 +23,10 @@ void State::set##name(##name* ##member)\
 
 namespace Vulkan
 {
-
     STATE_GETTER_SETTER(Instance, instance, VkInstance);
     STATE_GETTER_SETTER(Surface, surface, VkSurfaceKHR);
     STATE_GETTER_SETTER(PhysicalDevice, physicalDevice, VkPhysicalDevice);
     STATE_GETTER_SETTER(Device, device, VkDevice);
     STATE_GETTER_SETTER(Swapchain, swapchain, VkSwapchainKHR);
+    STATE_GETTER_SETTER(Pipeline, pipeline, VkPipeline);
 }

@@ -149,12 +149,24 @@ namespace Vulkan
 
     Swapchain::~Swapchain()
     {
+        for (auto imageView : imageViews)
+            vkDestroyImageView(State::getDevice(), imageView, nullptr);
         vkDestroySwapchainKHR(State::getDevice(), swapchain, nullptr);
         APPLICATION_LOG("Destroyed Swapchain.");
     }
 
-    VkSwapchainKHR& Swapchain::getSwapchain()
+    VkSwapchainKHR Swapchain::getSwapchain()
     {
         return swapchain;
+    }
+
+    VkFormat Swapchain::getImageFormat()
+    {
+        return imageFormat;
+    }
+
+    VkExtent2D Swapchain::getExtent()
+    {
+        return extent;
     }
 }

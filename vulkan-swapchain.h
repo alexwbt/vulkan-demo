@@ -12,7 +12,9 @@ namespace Vulkan
         Swapchain();
         ~Swapchain();
 
-        VkSwapchainKHR& getSwapchain();
+        VkSwapchainKHR getSwapchain();
+        VkFormat getImageFormat();
+        VkExtent2D getExtent();
     private:
         VkSwapchainKHR swapchain;
         VkFormat imageFormat;

@@ -21,7 +21,7 @@ namespace Vulkan
         APPLICATION_LOG("Destroyed Surface.");
     }
 
-    VkSurfaceKHR& Surface::getSurface()
+    VkSurfaceKHR Surface::getSurface()
     {
         return surface;
     }

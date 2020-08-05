@@ -10,7 +10,7 @@ namespace Vulkan
         Surface();
         ~Surface();
 
-        VkSurfaceKHR& getSurface();
+        VkSurfaceKHR getSurface();
     private:
         VkSurfaceKHR surface;
     };

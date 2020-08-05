@@ -82,7 +82,7 @@ namespace Vulkan
         APPLICATION_LOG("Destroyed Vulkan Instance.");
     }
 
-    VkInstance& Instance::getInstance()
+    VkInstance Instance::getInstance()
     {
         return instance;
     }

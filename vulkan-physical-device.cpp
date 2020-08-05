@@ -75,7 +75,7 @@ namespace Vulkan
         APPLICATION_LOG("Selected Physical Device.");
     }
 
-    VkPhysicalDevice& PhysicalDevice::getPhysicalDevice()
+    VkPhysicalDevice PhysicalDevice::getPhysicalDevice()
     {
         return physicalDevice;
     }

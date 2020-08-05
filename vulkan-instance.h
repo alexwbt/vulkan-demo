@@ -10,7 +10,7 @@ namespace Vulkan
         Instance();
         ~Instance();
 
-        VkInstance& getInstance();
+        VkInstance getInstance();
     private:
         VkInstance instance;
     };

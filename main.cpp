@@ -16,6 +16,7 @@ int main()
         PhysicalDevice physicalDevice;
         Device device;
         Swapchain swapchain;
+        Pipeline pipeline;
 
         while (Window::update())
         {

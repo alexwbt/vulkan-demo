@@ -5,7 +5,68 @@ namespace Vulkan
 {
     VkShaderModule createShaderModule(const std::vector<char>& code)
     {
+        VkShaderModuleCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = code.size();
+        createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+        VkShaderModule shaderModule;
+        if (vkCreateShaderModule(State::getDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+            throw std::runtime_error("Failed to create shader module.");
+        return shaderModule;
+    }
 
+    void Pipeline::createLayout()
+    {
+        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount = 0;
+        pipelineLayoutInfo.pSetLayouts = nullptr;
+        pipelineLayoutInfo.pushConstantRangeCount = 0;
+        pipelineLayoutInfo.pPushConstantRanges = nullptr;
+        if (vkCreatePipelineLayout(State::getDevice(), &pipelineLayoutInfo, nullptr, &layout) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create pipeline layout.");
+        }
+    }
+
+    void Pipeline::createRenderPass()
+    {
+        VkAttachmentDescription colorAttachment{};
+        colorAttachment.format = State::swapchainObj()->getImageFormat();
+        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference colorAttachmentRef{};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription subpass{};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &colorAttachmentRef;
+
+        VkSubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dependency.dstSubpass = 0;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.srcAccessMask = 0;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        VkRenderPassCreateInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassInfo.attachmentCount = 1;
+        renderPassInfo.pAttachments = &colorAttachment;
+        renderPassInfo.subpassCount = 1;
+        renderPassInfo.pSubpasses = &subpass;
+        renderPassInfo.dependencyCount = 1;
+        renderPassInfo.pDependencies = &dependency;
+        if (vkCreateRenderPass(State::getDevice(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+            throw std::runtime_error("Failed to create render pass.");
     }
 
     Pipeline::Pipeline()
@@ -115,6 +176,8 @@ namespace Vulkan
         dynamicState.dynamicStateCount = 2;
         dynamicState.pDynamicStates = dynamicStates;
 
+        createLayout();
+        createRenderPass();
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = 2;
@@ -127,22 +190,27 @@ namespace Vulkan
         pipelineInfo.pDepthStencilState = nullptr;
         pipelineInfo.pColorBlendState = &colorBlending;
         pipelineInfo.pDynamicState = nullptr;
-        pipelineInfo.layout = pipelineLayout;
+        pipelineInfo.layout = layout;
         pipelineInfo.renderPass = renderPass;
         pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
         pipelineInfo.basePipelineIndex = -1;
-
         if (vkCreateGraphicsPipelines(State::getDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS)
             throw std::runtime_error("Failed to create graphics pipeline.");
 
         vkDestroyShaderModule(State::getDevice(), fragShaderModule, nullptr);
         vkDestroyShaderModule(State::getDevice(), vertShaderModule, nullptr);
+
+        State::setPipeline(this);
+        APPLICATION_LOG("Created Pipeline.");
     }
 
     Pipeline::~Pipeline()
     {
+        vkDestroyRenderPass(State::getDevice(), renderPass, nullptr);
+        vkDestroyPipelineLayout(State::getDevice(), layout, nullptr);
         vkDestroyPipeline(State::getDevice(), pipeline, nullptr);
+        APPLICATION_LOG("Destroyed Pipeline.");
     }
 
     VkPipeline Pipeline::getPipeline()

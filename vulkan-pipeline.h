@@ -40,6 +40,11 @@ namespace Vulkan
 
         VkPipeline getPipeline();
     private:
+        void createLayout();
+        void createRenderPass();
+
         VkPipeline pipeline;
+        VkPipelineLayout layout;
+        VkRenderPass renderPass;
     };
 }

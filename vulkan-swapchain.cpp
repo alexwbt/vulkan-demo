@@ -97,6 +97,19 @@ namespace Vulkan
 
     Swapchain::Swapchain()
     {
+        create();
+        State::setSwapchain(this);
+        APPLICATION_LOG("Created Swapchain.");
+    }
+
+    Swapchain::~Swapchain()
+    {
+        destroy();
+        APPLICATION_LOG("Destroyed Swapchain.");
+    }
+
+    void Swapchain::create()
+    {
         SwapchainSupportDetails swapchainSupport = querySwapchainSupport(State::getPhysicalDevice());
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapchainSupport.formats);
@@ -142,31 +155,39 @@ namespace Vulkan
             throw std::runtime_error("Failed to create swapchain.");
 
         retrieveImagesAndCreateImageViews();
-
-        State::setSwapchain(this);
-        APPLICATION_LOG("Created Swapchain.");
     }
 
-    Swapchain::~Swapchain()
+    void Swapchain::destroy()
     {
+        for (auto framebuffer : framebuffers)
+            vkDestroyFramebuffer(State::getDevice(), framebuffer, nullptr);
         for (auto imageView : imageViews)
             vkDestroyImageView(State::getDevice(), imageView, nullptr);
         vkDestroySwapchainKHR(State::getDevice(), swapchain, nullptr);
-        APPLICATION_LOG("Destroyed Swapchain.");
     }
 
-    VkSwapchainKHR Swapchain::getSwapchain()
+    void Swapchain::createFramebuffers()
     {
-        return swapchain;
+        framebuffers.resize(imageViews.size());
+        for (size_t i = 0; i < imageViews.size(); i++)
+        {
+            VkImageView attachments[] = { imageViews[i] };
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = State::pipelineObj()->getRenderPass();
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = extent.width;
+            framebufferInfo.height = extent.height;
+            framebufferInfo.layers = 1;
+            if (vkCreateFramebuffer(State::getDevice(), &framebufferInfo, nullptr, &framebuffers[i]) != VK_SUCCESS)
+                throw std::runtime_error("Failed to create framebuffers.");
+        }
     }
 
-    VkFormat Swapchain::getImageFormat()
-    {
-        return imageFormat;
-    }
-
-    VkExtent2D Swapchain::getExtent()
-    {
-        return extent;
-    }
+    VkSwapchainKHR Swapchain::getSwapchain() { return swapchain; }
+    VkFormat Swapchain::getImageFormat() { return imageFormat; }
+    VkExtent2D Swapchain::getExtent() { return extent; }
+    std::vector<VkFramebuffer>& Swapchain::getFramebuffers() { return framebuffers; }
+    size_t Swapchain::getImageCount() { return images.size(); }
 }

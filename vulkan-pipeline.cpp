@@ -15,6 +15,44 @@ namespace Vulkan
         return shaderModule;
     }
 
+    void Pipeline::beginRenderPass(VertexBuffer& vertexBuffer)
+    {
+        size_t imageCount = State::swapchainObj()->getImageCount();
+        std::vector<VkFramebuffer> framebuffers = State::swapchainObj()->getFramebuffers();
+        VkExtent2D extent = State::swapchainObj()->getExtent();
+        std::vector<VkCommandBuffer> commandBuffers = State::commandPoolObj()->getCommandBuffers();
+        for (size_t i = 0; i < imageCount; i++)
+        {
+            VkRenderPassBeginInfo renderPassInfo{};
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = renderPass;
+            renderPassInfo.framebuffer = framebuffers[i];
+            renderPassInfo.renderArea.offset = { 0, 0 };
+            renderPassInfo.renderArea.extent = extent;
+
+            VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+            renderPassInfo.clearValueCount = 1;
+            renderPassInfo.pClearValues = &clearColor;
+
+            vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+            vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, State::getPipeline());
+
+            VkBuffer vertexBuffers[] = { vertexBuffer.getVertexBuffer() };
+            VkDeviceSize offsets[] = { 0 };
+            vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+            vkCmdDraw(commandBuffers[i], static_cast<uint32_t>(vertexBuffer.getVertices().size()), 1, 0, 0);
+
+            vkCmdEndRenderPass(commandBuffers[i]);
+
+            if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
+            {
+                throw std::runtime_error("Failed to end command buffer.");
+            }
+        }
+    }
+
     void Pipeline::createLayout()
     {
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -70,6 +108,19 @@ namespace Vulkan
     }
 
     Pipeline::Pipeline()
+    {
+        State::setPipeline(this);
+        create();
+        APPLICATION_LOG("Created Pipeline.");
+    }
+
+    Pipeline::~Pipeline()
+    {
+        destroy();
+        APPLICATION_LOG("Destroyed Pipeline.");
+    }
+
+    void Pipeline::create()
     {
         VkShaderModule vertShaderModule = createShaderModule(Util::readFile("shader/vert.spv"));
         VkShaderModule fragShaderModule = createShaderModule(Util::readFile("shader/frag.spv"));
@@ -201,20 +252,23 @@ namespace Vulkan
         vkDestroyShaderModule(State::getDevice(), fragShaderModule, nullptr);
         vkDestroyShaderModule(State::getDevice(), vertShaderModule, nullptr);
 
-        State::setPipeline(this);
-        APPLICATION_LOG("Created Pipeline.");
+        State::swapchainObj()->createFramebuffers();
     }
 
-    Pipeline::~Pipeline()
+    void Pipeline::destroy()
     {
         vkDestroyRenderPass(State::getDevice(), renderPass, nullptr);
         vkDestroyPipelineLayout(State::getDevice(), layout, nullptr);
         vkDestroyPipeline(State::getDevice(), pipeline, nullptr);
-        APPLICATION_LOG("Destroyed Pipeline.");
     }
 
     VkPipeline Pipeline::getPipeline()
     {
         return pipeline;
+    }
+
+    VkRenderPass Pipeline::getRenderPass()
+    {
+        return renderPass;
     }
 }

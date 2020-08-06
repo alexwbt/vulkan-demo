@@ -1,5 +1,6 @@
 #include "window.h"
 #include "vulkan-state.h"
+#include "vulkan-renderer.h"
 
 #include <iostream>
 
@@ -17,11 +18,28 @@ int main()
         Device device;
         Swapchain swapchain;
         Pipeline pipeline;
+        CommandPool commandPool;
+
+        std::vector<Vertex> vertices = {
+            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}},
+            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}},
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}}
+        };
+        VertexBuffer vertexBuffer(vertices);
+
+        pipeline.beginRenderPass(vertexBuffer);
+
+        Renderer renderer;
 
         while (Window::update())
         {
-
+            renderer.render(vertexBuffer);
         }
+
+        vkDeviceWaitIdle(device.getDevice());
 
         Window::terminate();
     }

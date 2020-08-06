@@ -8,6 +8,7 @@
 #include "vulkan-device.h"
 #include "vulkan-swapchain.h"
 #include "vulkan-pipeline.h"
+#include "vulkan-command-pool.h"
 
 #include <set>
 #include <vector>
@@ -38,6 +39,7 @@ namespace Vulkan
         STATE_GETTER_SETTER_H(Device, device, VkDevice);
         STATE_GETTER_SETTER_H(Swapchain, swapchain, VkSwapchainKHR);
         STATE_GETTER_SETTER_H(Pipeline, pipeline, VkPipeline);
+        STATE_GETTER_SETTER_H(CommandPool, commandPool, VkCommandPool);
 
     private:
         static Instance* instance;
@@ -46,5 +48,6 @@ namespace Vulkan
         static Device* device;
         static Swapchain* swapchain;
         static Pipeline* pipeline;
+        static CommandPool* commandPool;
     };
 }

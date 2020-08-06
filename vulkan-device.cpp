@@ -55,8 +55,7 @@ namespace Vulkan
         APPLICATION_LOG("Destroyed Device.");
     }
 
-    VkDevice Device::getDevice()
-    {
-        return device;
-    }
+    VkDevice Device::getDevice() { return device; }
+    VkQueue Device::getPresentQueue() { return presentQueue; }
+    VkQueue Device::getGraphicsQueue() { return graphicsQueue; }
 }

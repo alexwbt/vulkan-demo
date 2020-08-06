@@ -29,4 +29,5 @@ namespace Vulkan
     STATE_GETTER_SETTER(Device, device, VkDevice);
     STATE_GETTER_SETTER(Swapchain, swapchain, VkSwapchainKHR);
     STATE_GETTER_SETTER(Pipeline, pipeline, VkPipeline);
+    STATE_GETTER_SETTER(CommandPool, commandPool, VkCommandPool);
 }

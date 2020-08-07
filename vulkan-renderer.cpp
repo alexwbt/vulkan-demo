@@ -19,8 +19,10 @@ namespace Vulkan
         APPLICATION_LOG("Resized.");
     }
 
-    Renderer::Renderer()
+    Renderer::Renderer(VertexBuffer& vertexBuffer) : vertexBuffer{ vertexBuffer }
     {
+        State::pipelineObj()->beginRenderPass(vertexBuffer);
+
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
@@ -50,7 +52,7 @@ namespace Vulkan
         }
     }
 
-    void Renderer::render(VertexBuffer& vertexBuffer)
+    void Renderer::render()
     {
         vkWaitForFences(State::getDevice(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 

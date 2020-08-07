@@ -8,10 +8,10 @@ namespace Vulkan
     class Renderer
     {
     public:
-        Renderer();
+        Renderer(VertexBuffer& vertexBuffer);
         ~Renderer();
         
-        void render(VertexBuffer& vertexBuffer);
+        void render();
     private:
         const int MAX_FRAMES_IN_FLIGHT = 2;
         std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -19,5 +19,7 @@ namespace Vulkan
         std::vector<VkFence> inFlightFences;
         std::vector<VkFence> imagesInFlight;
         size_t currentFrame;
+
+        VertexBuffer& vertexBuffer;
     };
 }

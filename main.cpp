@@ -29,14 +29,11 @@ int main()
             {{0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}}
         };
         VertexBuffer vertexBuffer(vertices);
-
-        pipeline.beginRenderPass(vertexBuffer);
-
-        Renderer renderer;
+        Renderer renderer(vertexBuffer);
 
         while (Window::update())
         {
-            renderer.render(vertexBuffer);
+            renderer.render();
         }
 
         vkDeviceWaitIdle(device.getDevice());

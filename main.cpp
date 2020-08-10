@@ -21,15 +21,17 @@ int main()
         CommandPool commandPool;
 
         std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}},
-            {{-0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}},
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-            {{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}},
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}}
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+        };
+        std::vector<uint16_t> indices = {
+            0, 1, 2, 2, 3, 0
         };
         VertexBuffer vertexBuffer(vertices);
-        Renderer renderer(vertexBuffer);
+        IndexBuffer indexBuffer(indices);
+        Renderer renderer(vertexBuffer, indexBuffer);
 
         while (Window::update())
         {

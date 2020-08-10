@@ -1,14 +1,14 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-#include <vector>
+#include "vulkan-vertex-buffer.h"
+#include "vulkan-index-buffer.h"
 
 namespace Vulkan
 {
     class Renderer
     {
     public:
-        Renderer(VertexBuffer& vertexBuffer);
+        Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
         ~Renderer();
         
         void render();
@@ -21,5 +21,8 @@ namespace Vulkan
         size_t currentFrame;
 
         VertexBuffer& vertexBuffer;
+        IndexBuffer& indexBuffer;
+
+        void resized();
     };
 }

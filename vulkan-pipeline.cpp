@@ -15,7 +15,7 @@ namespace Vulkan
         return shaderModule;
     }
 
-    void Pipeline::beginRenderPass(VertexBuffer& vertexBuffer)
+    void Pipeline::beginRenderPass(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer)
     {
         size_t imageCount = State::swapchainObj()->getImageCount();
         std::vector<VkFramebuffer> framebuffers = State::swapchainObj()->getFramebuffers();
@@ -36,13 +36,15 @@ namespace Vulkan
 
             vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-            vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, State::getPipeline());
+            vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-            VkBuffer vertexBuffers[] = { vertexBuffer.getVertexBuffer() };
+            VkBuffer vertexBuffers[] = { vertexBuffer.getBuffer() };
             VkDeviceSize offsets[] = { 0 };
             vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
-            vkCmdDraw(commandBuffers[i], static_cast<uint32_t>(vertexBuffer.getVertices().size()), 1, 0, 0);
+            vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
+
+            vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indexBuffer.getIndices().size()), 1, 0, 0, 0);
 
             vkCmdEndRenderPass(commandBuffers[i]);
 

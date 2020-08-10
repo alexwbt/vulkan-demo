@@ -1,8 +1,7 @@
 #pragma once
 
 #include "vulkan-vertex-buffer.h"
-
-#include <vulkan/vulkan.h>
+#include "vulkan-index-buffer.h"
 
 namespace Vulkan
 {
@@ -14,7 +13,7 @@ namespace Vulkan
 
         void create();
         void destroy();
-        void beginRenderPass(VertexBuffer& vertexBuffer);
+        void beginRenderPass(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
 
         VkPipeline getPipeline();
         VkRenderPass getRenderPass();

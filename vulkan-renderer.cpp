@@ -4,7 +4,7 @@
 
 namespace Vulkan
 {
-    void resized(VertexBuffer& vertexBuffer)
+    void Renderer::resized()
     {
         while (Window::width == 0 || Window::height == 0)
             glfwWaitEvents();
@@ -15,13 +15,13 @@ namespace Vulkan
         State::swapchainObj()->create();
         State::pipelineObj()->create();
         State::commandPoolObj()->create();
-        State::pipelineObj()->beginRenderPass(vertexBuffer);
+        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
         APPLICATION_LOG("Resized.");
     }
 
-    Renderer::Renderer(VertexBuffer& vertexBuffer) : vertexBuffer{ vertexBuffer }
+    Renderer::Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer) : vertexBuffer{ vertexBuffer }, indexBuffer{ indexBuffer }
     {
-        State::pipelineObj()->beginRenderPass(vertexBuffer);
+        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
 
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -61,7 +61,7 @@ namespace Vulkan
             imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            resized(vertexBuffer);
+            resized();
             return;
         }
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -108,7 +108,7 @@ namespace Vulkan
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || Window::resized)
         {
             Window::resized = false;
-            resized(vertexBuffer);
+            resized();
         }
         else if (result != VK_SUCCESS)
             throw std::runtime_error("Failed to present swapchain image.");

@@ -20,13 +20,6 @@ namespace Vulkan
         copyBuffer(stagingBuffer.getBuffer(), buffer.getBuffer(), bufferSize);
     }
 
-    VkBuffer VertexBuffer::getVertexBuffer()
-    {
-        return buffer.getBuffer();
-    }
-
-    std::vector<Vertex>& VertexBuffer::getVertices()
-    {
-        return vertices;
-    }
+    VkBuffer VertexBuffer::getBuffer() { return buffer.getBuffer(); }
+    std::vector<Vertex>& VertexBuffer::getVertices() { return vertices; }
 }

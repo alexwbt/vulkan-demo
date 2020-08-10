@@ -3,7 +3,6 @@
 #include "vulkan-buffer.h"
 
 #include <glm/glm.hpp>
-#include <vulkan/vulkan.h>
 #include <vector>
 #include <array>
 
@@ -40,7 +39,7 @@ namespace Vulkan
     public:
         VertexBuffer(std::vector<Vertex>& vertices);
 
-        VkBuffer getVertexBuffer();
+        VkBuffer getBuffer();
         std::vector<Vertex>& getVertices();
     private:
         Buffer buffer;

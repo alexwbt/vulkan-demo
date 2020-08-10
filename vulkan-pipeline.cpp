@@ -47,9 +47,7 @@ namespace Vulkan
             vkCmdEndRenderPass(commandBuffers[i]);
 
             if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
-            {
                 throw std::runtime_error("Failed to end command buffer.");
-            }
         }
     }
 
@@ -61,9 +59,8 @@ namespace Vulkan
         pipelineLayoutInfo.pSetLayouts = nullptr;
         pipelineLayoutInfo.pushConstantRangeCount = 0;
         pipelineLayoutInfo.pPushConstantRanges = nullptr;
-        if (vkCreatePipelineLayout(State::getDevice(), &pipelineLayoutInfo, nullptr, &layout) != VK_SUCCESS) {
+        if (vkCreatePipelineLayout(State::getDevice(), &pipelineLayoutInfo, nullptr, &layout) != VK_SUCCESS)
             throw std::runtime_error("Failed to create pipeline layout.");
-        }
     }
 
     void Pipeline::createRenderPass()

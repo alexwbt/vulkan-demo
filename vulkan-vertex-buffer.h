@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vulkan-buffer.h"
+
 #include <glm/glm.hpp>
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -37,13 +39,11 @@ namespace Vulkan
     {
     public:
         VertexBuffer(std::vector<Vertex>& vertices);
-        ~VertexBuffer();
 
         VkBuffer getVertexBuffer();
         std::vector<Vertex>& getVertices();
     private:
-        VkBuffer vertexBuffer;
-        VkDeviceMemory bufferMemory;
+        Buffer buffer;
         std::vector<Vertex>& vertices;
     };
 }

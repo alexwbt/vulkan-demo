@@ -18,9 +18,9 @@ namespace Vulkan
     void Pipeline::beginRenderPass(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer)
     {
         size_t imageCount = State::swapchainObj()->getImageCount();
-        std::vector<VkFramebuffer> framebuffers = State::swapchainObj()->getFramebuffers();
         VkExtent2D extent = State::swapchainObj()->getExtent();
         std::vector<VkCommandBuffer> commandBuffers = State::commandPoolObj()->getCommandBuffers();
+        std::vector<VkDescriptorSet>& descriptorSets = State::descriptorSetObj()->getDescriptorSets();
         for (size_t i = 0; i < imageCount; i++)
         {
             VkRenderPassBeginInfo renderPassInfo{};
@@ -44,6 +44,8 @@ namespace Vulkan
 
             vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
+            vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSets[i], 0, nullptr);
+
             vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indexBuffer.getIndices().size()), 1, 0, 0, 0);
 
             vkCmdEndRenderPass(commandBuffers[i]);
@@ -57,8 +59,8 @@ namespace Vulkan
     {
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0;
-        pipelineLayoutInfo.pSetLayouts = nullptr;
+        pipelineLayoutInfo.setLayoutCount = 1;
+        pipelineLayoutInfo.pSetLayouts = State::descriptorSetObj()->getDescriptorSetLayoutPointer();
         pipelineLayoutInfo.pushConstantRangeCount = 0;
         pipelineLayoutInfo.pPushConstantRanges = nullptr;
         if (vkCreatePipelineLayout(State::getDevice(), &pipelineLayoutInfo, nullptr, &layout) != VK_SUCCESS)
@@ -104,6 +106,26 @@ namespace Vulkan
         renderPassInfo.pDependencies = &dependency;
         if (vkCreateRenderPass(State::getDevice(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
             throw std::runtime_error("Failed to create render pass.");
+    }
+
+    void Pipeline::createFramebuffers()
+    {
+        framebuffers.resize(State::swapchainObj()->getImageCount());
+        VkExtent2D extent = State::swapchainObj()->getExtent();
+        for (size_t i = 0; i < framebuffers.size(); i++)
+        {
+            VkImageView attachments[] = { State::swapchainObj()->getImageView(i) };
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = State::pipelineObj()->getRenderPass();
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = extent.width;
+            framebufferInfo.height = extent.height;
+            framebufferInfo.layers = 1;
+            if (vkCreateFramebuffer(State::getDevice(), &framebufferInfo, nullptr, &framebuffers[i]) != VK_SUCCESS)
+                throw std::runtime_error("Failed to create framebuffers.");
+        }
     }
 
     Pipeline::Pipeline()
@@ -181,7 +203,8 @@ namespace Vulkan
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        // rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f;
         rasterizer.depthBiasClamp = 0.0f;
@@ -251,23 +274,18 @@ namespace Vulkan
         vkDestroyShaderModule(State::getDevice(), fragShaderModule, nullptr);
         vkDestroyShaderModule(State::getDevice(), vertShaderModule, nullptr);
 
-        State::swapchainObj()->createFramebuffers();
+        createFramebuffers();
     }
 
     void Pipeline::destroy()
     {
+        for (auto framebuffer : framebuffers)
+            vkDestroyFramebuffer(State::getDevice(), framebuffer, nullptr);
         vkDestroyRenderPass(State::getDevice(), renderPass, nullptr);
         vkDestroyPipelineLayout(State::getDevice(), layout, nullptr);
         vkDestroyPipeline(State::getDevice(), pipeline, nullptr);
     }
 
-    VkPipeline Pipeline::getPipeline()
-    {
-        return pipeline;
-    }
-
-    VkRenderPass Pipeline::getRenderPass()
-    {
-        return renderPass;
-    }
+    VkPipeline Pipeline::getPipeline() { return pipeline; }
+    VkRenderPass Pipeline::getRenderPass() { return renderPass; }
 }

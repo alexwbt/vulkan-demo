@@ -17,6 +17,7 @@ int main()
         PhysicalDevice physicalDevice;
         Device device;
         Swapchain swapchain;
+        DescriptorSet descriptorSet;
         Pipeline pipeline;
         CommandPool commandPool;
 

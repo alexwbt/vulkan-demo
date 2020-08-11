@@ -21,8 +21,10 @@ namespace Vulkan
         VkPipeline pipeline;
         VkPipelineLayout layout;
         VkRenderPass renderPass;
+        std::vector<VkFramebuffer> framebuffers;
 
         void createLayout();
         void createRenderPass();
+        void createFramebuffers();
     };
 }

@@ -7,6 +7,7 @@
 #include "vulkan-physical-device.h"
 #include "vulkan-device.h"
 #include "vulkan-swapchain.h"
+#include "vulkan-descriptor-set.h"
 #include "vulkan-pipeline.h"
 #include "vulkan-command-pool.h"
 
@@ -38,6 +39,7 @@ namespace Vulkan
         STATE_GETTER_SETTER_H(PhysicalDevice, physicalDevice, VkPhysicalDevice);
         STATE_GETTER_SETTER_H(Device, device, VkDevice);
         STATE_GETTER_SETTER_H(Swapchain, swapchain, VkSwapchainKHR);
+        STATE_GETTER_SETTER_H(DescriptorSet, descriptorSet, void);
         STATE_GETTER_SETTER_H(Pipeline, pipeline, VkPipeline);
         STATE_GETTER_SETTER_H(CommandPool, commandPool, VkCommandPool);
 
@@ -47,6 +49,7 @@ namespace Vulkan
         static PhysicalDevice* physicalDevice;
         static Device* device;
         static Swapchain* swapchain;
+        static DescriptorSet* descriptorSet;
         static Pipeline* pipeline;
         static CommandPool* commandPool;
     };

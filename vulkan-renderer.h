@@ -23,6 +23,12 @@ namespace Vulkan
         VertexBuffer& vertexBuffer;
         IndexBuffer& indexBuffer;
 
+        std::vector<Buffer*> uniformBuffers;
+
         void resized();
+
+        void createUniformBuffer();
+        void destroyUniformBuffer();
+        void updateUniformBuffer(uint32_t currentImage);
     };
 }

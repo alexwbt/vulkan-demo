@@ -2,25 +2,17 @@
 #include "vulkan-state.h"
 #include "vulkan-renderer.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
+
 namespace Vulkan
 {
-    void Renderer::resized()
-    {
-        while (Window::width == 0 || Window::height == 0)
-            glfwWaitEvents();
-        vkDeviceWaitIdle(State::getDevice());
-        State::commandPoolObj()->destroy();
-        State::pipelineObj()->destroy();
-        State::swapchainObj()->destroy();
-        State::swapchainObj()->create();
-        State::pipelineObj()->create();
-        State::commandPoolObj()->create();
-        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
-        APPLICATION_LOG("Resized.");
-    }
-
     Renderer::Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer) : vertexBuffer{ vertexBuffer }, indexBuffer{ indexBuffer }
     {
+        createUniformBuffer();
+        State::descriptorSetObj()->createDescriptorPool();
+        State::descriptorSetObj()->createDescriptorSets(uniformBuffers);
         State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
 
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -50,6 +42,7 @@ namespace Vulkan
             vkDestroySemaphore(State::getDevice(), imageAvailableSemaphores[i], nullptr);
             vkDestroyFence(State::getDevice(), inFlightFences[i], nullptr);
         }
+        destroyUniformBuffer();
     }
 
     void Renderer::render()
@@ -72,6 +65,8 @@ namespace Vulkan
         imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
         vkResetFences(State::getDevice(), 1, &inFlightFences[currentFrame]);
+
+        updateUniformBuffer(imageIndex);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -114,5 +109,58 @@ namespace Vulkan
             throw std::runtime_error("Failed to present swapchain image.");
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    }
+
+    void Renderer::resized()
+    {
+        while (Window::width == 0 || Window::height == 0)
+            glfwWaitEvents();
+        vkDeviceWaitIdle(State::getDevice());
+        State::descriptorSetObj()->destroyDescriptorPool();
+        State::commandPoolObj()->destroy();
+        State::pipelineObj()->destroy();
+        State::swapchainObj()->destroy();
+        State::swapchainObj()->create();
+        State::pipelineObj()->create();
+        State::commandPoolObj()->create();
+        destroyUniformBuffer();
+        createUniformBuffer();
+        State::descriptorSetObj()->createDescriptorPool();
+        State::descriptorSetObj()->createDescriptorSets(uniformBuffers);
+        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
+        APPLICATION_LOG("Resized.");
+    }
+
+    void Renderer::createUniformBuffer()
+    {
+        uniformBuffers.resize(State::swapchainObj()->getImageCount());
+        VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+        for (size_t i = 0; i < uniformBuffers.size(); i++)
+            uniformBuffers[i] = new Buffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    }
+
+    void Renderer::destroyUniformBuffer()
+    {
+        for (size_t i = 0; i < uniformBuffers.size(); i++)
+            delete uniformBuffers[i];
+    }
+
+    void Renderer::updateUniformBuffer(uint32_t currentImage) {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+        UniformBufferObject ubo{};
+        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.projection = glm::perspective(glm::radians(45.0f), Window::width / (float)Window::height, 0.1f, 10.0f);
+        ubo.projection[1][1] *= -1;
+        ubo.pvm = ubo.projection * ubo.view * ubo.model;
+
+        void* data;
+        vkMapMemory(State::getDevice(), uniformBuffers[currentImage]->getBufferMemory(), 0, sizeof(ubo), 0, &data);
+        memcpy(data, &ubo, sizeof(ubo));
+        vkUnmapMemory(State::getDevice(), uniformBuffers[currentImage]->getBufferMemory());
     }
 }

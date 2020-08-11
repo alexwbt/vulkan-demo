@@ -13,7 +13,7 @@ int main()
 {
     try
     {
-        Window::initialize(800, 600, "Vulkan Demo");
+        Window::initialize(1200, 720, "Vulkan Demo");
 
         Instance instance;
         Surface surface;
@@ -40,16 +40,27 @@ int main()
         IndexBuffer indexBuffer(indices);
         Renderer renderer(vertexBuffer, indexBuffer, camera);
 
-        auto startTime = std::chrono::high_resolution_clock::now();
+        float fpsCounter = 0;
+        int fps = 0;
+        std::chrono::steady_clock::time_point startTime = std::chrono::high_resolution_clock::now();
         while (Window::update())
         {
-            auto currentTime = std::chrono::high_resolution_clock::now();
+            std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
             float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-            startTime = currentTime;
+            fps++;
+            fpsCounter += deltaTime;
+            if (fpsCounter >= 1)
+            {
+                Window::setTitle(Window::title + std::string(" | FPS:") + std::to_string(fps));
+                fps = 0;
+                fpsCounter = 0;
+            }
 
             cameraInput.update(deltaTime);
 
             renderer.render();
+
+            startTime = currentTime;
         }
 
         vkDeviceWaitIdle(device.getDevice());

@@ -21,6 +21,8 @@ void Window::initialize(int width, int height, const char* title)
     window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     Window::width = width;
     Window::height = height;
 }

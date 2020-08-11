@@ -2,13 +2,14 @@
 
 #include "vulkan-vertex-buffer.h"
 #include "vulkan-index-buffer.h"
+#include "camera.h"
 
 namespace Vulkan
 {
     class Renderer
     {
     public:
-        Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
+        Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, Camera& camera);
         ~Renderer();
         
         void render();
@@ -24,6 +25,8 @@ namespace Vulkan
         IndexBuffer& indexBuffer;
 
         std::vector<Buffer*> uniformBuffers;
+
+        Camera& camera;
 
         void resized();
 

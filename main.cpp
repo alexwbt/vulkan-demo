@@ -1,7 +1,10 @@
-#include "window.h"
 #include "vulkan-state.h"
 #include "vulkan-renderer.h"
+#include "window.h"
+#include "camera.h"
+#include "camera-input.h"
 
+#include <chrono>
 #include <iostream>
 
 using namespace Vulkan;
@@ -21,6 +24,9 @@ int main()
         Pipeline pipeline;
         CommandPool commandPool;
 
+        Camera camera;
+        CameraInput cameraInput(Window::window, camera);
+
         std::vector<Vertex> vertices = {
             {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
             {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -32,10 +38,17 @@ int main()
         };
         VertexBuffer vertexBuffer(vertices);
         IndexBuffer indexBuffer(indices);
-        Renderer renderer(vertexBuffer, indexBuffer);
+        Renderer renderer(vertexBuffer, indexBuffer, camera);
 
+        auto startTime = std::chrono::high_resolution_clock::now();
         while (Window::update())
         {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+            startTime = currentTime;
+
+            cameraInput.update(deltaTime);
+
             renderer.render();
         }
 

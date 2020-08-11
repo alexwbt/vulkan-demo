@@ -10,10 +10,10 @@
 namespace Vulkan
 {
     struct UniformBufferObject {
-        glm::mat4 pvm;
-        glm::mat4 projection;
-        glm::mat4 view;
-        glm::mat4 model;
+        alignas(16) glm::mat4 pvm;
+        alignas(16) glm::mat4 projection;
+        alignas(16) glm::mat4 view;
+        alignas(16) glm::mat4 model;
     };
 
     class DescriptorSet

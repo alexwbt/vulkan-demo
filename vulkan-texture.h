@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vulkan-texture-image.h"
+#include "vulkan-image.h"
 
 namespace Vulkan
 {
@@ -13,8 +13,7 @@ namespace Vulkan
         VkImageView getImageView();
         VkSampler getSampler();
     private:
-        TextureImage image;
-        ImageView imageView;
+        Image* image;
         VkSampler sampler;
 
         void createSampler();

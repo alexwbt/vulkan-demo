@@ -6,13 +6,13 @@
 
 namespace Vulkan
 {
-    Renderer::Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, Camera& camera)
-        : vertexBuffer{ vertexBuffer }, indexBuffer{ indexBuffer }, camera{ camera }
+    Renderer::Renderer(CommandBuffer& commandBuffer, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, Texture& texture, Camera& camera)
+        : commandBuffer{ commandBuffer }, vertexBuffer{ vertexBuffer }, indexBuffer{ indexBuffer }, texture{ texture }, camera{ camera }
     {
         createUniformBuffer();
         State::descriptorSetObj()->createDescriptorPool();
-        State::descriptorSetObj()->createDescriptorSets(uniformBuffers);
-        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
+        State::descriptorSetObj()->createDescriptorSets(uniformBuffers, texture);
+        runRenderCommands();
 
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -67,23 +67,16 @@ namespace Vulkan
 
         updateUniformBuffer(imageIndex);
 
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
         VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+        VkSubmitInfo submitInfo{};
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &State::commandPoolObj()->getCommandBuffers()[imageIndex];
-
-        VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
-
-        if (vkQueueSubmit(State::deviceObj()->getGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
-            throw std::runtime_error("Failed to submit command buffer.");
+        commandBuffer.submit(imageIndex, State::deviceObj()->getGraphicsQueue(), &submitInfo, inFlightFences[currentFrame]);
 
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -110,6 +103,45 @@ namespace Vulkan
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
+    void Renderer::runRenderCommands()
+    {
+        std::vector<VkDescriptorSet>& descriptorSets = State::descriptorSetObj()->getDescriptorSets();
+        std::vector<VkFramebuffer>& framebuffers = State::pipelineObj()->getFramebuffers();
+        for (size_t i = 0; i < commandBuffer.getSize(); i++)
+        {
+            VkRenderPassBeginInfo renderPassInfo{};
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = State::pipelineObj()->getRenderPass();
+            renderPassInfo.framebuffer = framebuffers[i];
+            renderPassInfo.renderArea.offset = { 0, 0 };
+            renderPassInfo.renderArea.extent = State::swapchainObj()->getExtent();
+
+            VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+            renderPassInfo.clearValueCount = 1;
+            renderPassInfo.pClearValues = &clearColor;
+
+            VkCommandBuffer cb = commandBuffer.getBuffer(i);
+
+            vkCmdBeginRenderPass(cb, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+            vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, State::getPipeline());
+
+            VkBuffer vertexBuffers[] = { vertexBuffer.getBuffer() };
+            VkDeviceSize offsets[] = { 0 };
+            vkCmdBindVertexBuffers(cb, 0, 1, vertexBuffers, offsets);
+
+            vkCmdBindIndexBuffer(cb, indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
+
+            vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, State::pipelineObj()->getLayout(), 0, 1, &descriptorSets[i], 0, nullptr);
+
+            vkCmdDrawIndexed(cb, static_cast<uint32_t>(indexBuffer.getIndices().size()), 1, 0, 0, 0);
+
+            vkCmdEndRenderPass(cb);
+
+            commandBuffer.end(i);
+        }
+    }
+
     void Renderer::resized()
     {
         while (Window::width == 0 || Window::height == 0)
@@ -122,11 +154,12 @@ namespace Vulkan
         State::swapchainObj()->create();
         State::pipelineObj()->create();
         State::commandPoolObj()->create();
+        commandBuffer.reallocate();
         destroyUniformBuffer();
         createUniformBuffer();
         State::descriptorSetObj()->createDescriptorPool();
-        State::descriptorSetObj()->createDescriptorSets(uniformBuffers);
-        State::pipelineObj()->beginRenderPass(vertexBuffer, indexBuffer);
+        State::descriptorSetObj()->createDescriptorSets(uniformBuffers, texture);
+        runRenderCommands();
         APPLICATION_LOG("Resized.");
     }
 
@@ -154,9 +187,6 @@ namespace Vulkan
         ubo.projection[1][1] *= -1;
         ubo.pvm = ubo.projection * ubo.view * ubo.model;
 
-        void* data;
-        vkMapMemory(State::getDevice(), uniformBuffers[currentImage]->getBufferMemory(), 0, sizeof(ubo), 0, &data);
-        memcpy(data, &ubo, sizeof(ubo));
-        vkUnmapMemory(State::getDevice(), uniformBuffers[currentImage]->getBufferMemory());
+        uniformBuffers[currentImage]->storeData(&ubo);
     }
 }

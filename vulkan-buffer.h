@@ -4,7 +4,7 @@
 
 namespace Vulkan
 {
-    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
     class Buffer
     {
@@ -12,9 +12,13 @@ namespace Vulkan
         Buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
         ~Buffer();
 
+        void storeData(void* data);
+        void copy(Buffer& buffer);
+
+        VkDeviceSize getSize();
         VkBuffer getBuffer();
-        VkDeviceMemory getBufferMemory();
     private:
+        VkDeviceSize size;
         VkBuffer buffer;
         VkDeviceMemory bufferMemory;
     };

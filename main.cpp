@@ -1,5 +1,6 @@
 #include "vulkan-state.h"
 #include "vulkan-renderer.h"
+#include "vulkan-texture.h"
 #include "window.h"
 #include "camera.h"
 #include "camera-input.h"
@@ -23,22 +24,24 @@ int main()
         DescriptorSet descriptorSet;
         Pipeline pipeline;
         CommandPool commandPool;
+        CommandBuffer commandBuffer(swapchain.getImageCount(), 0);
 
         Camera camera;
         CameraInput cameraInput(Window::window, camera);
 
         std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
         };
         std::vector<uint16_t> indices = {
             0, 1, 2, 2, 3, 0
         };
         VertexBuffer vertexBuffer(vertices);
         IndexBuffer indexBuffer(indices);
-        Renderer renderer(vertexBuffer, indexBuffer, camera);
+        Texture texture("textures/texture2.jpg", VK_FORMAT_R8G8B8A8_SRGB);
+        Renderer renderer(commandBuffer, vertexBuffer, indexBuffer, texture, camera);
 
         float fpsCounter = 0;
         int fps = 0;

@@ -2,6 +2,7 @@
 
 #include "vulkan-vertex-buffer.h"
 #include "vulkan-index-buffer.h"
+#include "vulkan-texture.h"
 #include "camera.h"
 
 namespace Vulkan
@@ -9,11 +10,13 @@ namespace Vulkan
     class Renderer
     {
     public:
-        Renderer(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, Camera& camera);
+        Renderer(CommandBuffer& commandBuffer, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, Texture& teuxtre, Camera& camera);
         ~Renderer();
         
         void render();
     private:
+        CommandBuffer& commandBuffer;
+
         const int MAX_FRAMES_IN_FLIGHT = 2;
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -23,6 +26,7 @@ namespace Vulkan
 
         VertexBuffer& vertexBuffer;
         IndexBuffer& indexBuffer;
+        Texture& texture;
 
         std::vector<Buffer*> uniformBuffers;
 
@@ -33,5 +37,7 @@ namespace Vulkan
         void createUniformBuffer();
         void destroyUniformBuffer();
         void updateUniformBuffer(uint32_t currentImage);
+
+        void runRenderCommands();
     };
 }

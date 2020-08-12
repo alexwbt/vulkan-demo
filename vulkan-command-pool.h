@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include "vulkan-command-buffer.h"
 
 namespace Vulkan
 {
@@ -14,11 +14,7 @@ namespace Vulkan
         void destroy();
 
         VkCommandPool getCommandPool();
-        std::vector<VkCommandBuffer>& getCommandBuffers();
     private:
         VkCommandPool commandPool;
-        std::vector<VkCommandBuffer> commandBuffers;
-
-        void allocateCommandBuffers();
     };
 }

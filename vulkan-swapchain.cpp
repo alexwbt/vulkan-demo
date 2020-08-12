@@ -74,25 +74,7 @@ namespace Vulkan
 
         imageViews.resize(imageCount);
         for (uint32_t i = 0; i < imageCount; i++)
-        {
-            VkImageViewCreateInfo createInfo{};
-            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            createInfo.image = images[i];
-            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            createInfo.format = imageFormat;
-            createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            createInfo.subresourceRange.baseMipLevel = 0;
-            createInfo.subresourceRange.levelCount = 1;
-            createInfo.subresourceRange.baseArrayLayer = 0;
-            createInfo.subresourceRange.layerCount = 1;
-
-            if (vkCreateImageView(State::getDevice(), &createInfo, nullptr, &imageViews[i]) != VK_SUCCESS)
-                throw std::runtime_error("Failed to create image views.");
-        }
+            imageViews[i] = new ImageView(images[i], imageFormat);
     }
 
     Swapchain::Swapchain()
@@ -159,8 +141,8 @@ namespace Vulkan
 
     void Swapchain::destroy()
     {
-        for (auto imageView : imageViews)
-            vkDestroyImageView(State::getDevice(), imageView, nullptr);
+        for (ImageView* imageView : imageViews)
+            delete imageView;
         vkDestroySwapchainKHR(State::getDevice(), swapchain, nullptr);
     }
 
@@ -168,5 +150,5 @@ namespace Vulkan
     VkFormat Swapchain::getImageFormat() { return imageFormat; }
     VkExtent2D Swapchain::getExtent() { return extent; }
     size_t Swapchain::getImageCount() { return images.size(); }
-    VkImageView Swapchain::getImageView(int i) { return imageViews[i]; }
+    VkImageView Swapchain::getImageView(int i) { return imageViews[i]->getImageView(); }
 }

@@ -1,39 +1,21 @@
 #include "vulkan-buffer.h"
 #include "vulkan-state.h"
+#include "vulkan-command-buffer.h"
+
+#include <stdexcept>
 
 namespace Vulkan
 {
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = State::getCommandPool();
-        allocInfo.commandBufferCount = 1;
-        
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(State::getDevice(), &allocInfo, &commandBuffer);
-        
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-        
+        CommandBuffer commandBuffer(1, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
-        vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-        
-        vkEndCommandBuffer(commandBuffer);
-        
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-        
-        vkQueueSubmit(State::deviceObj()->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(State::deviceObj()->getGraphicsQueue());
-        
-        vkFreeCommandBuffers(State::getDevice(), State::getCommandPool(), 1, &commandBuffer);
+        vkCmdCopyBuffer(commandBuffer.getBuffer(0), srcBuffer, dstBuffer, 1, &copyRegion);
+
+        commandBuffer.end();
+        commandBuffer.submit();
+        commandBuffer.wait();
     }
 
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
@@ -45,7 +27,7 @@ namespace Vulkan
         throw std::runtime_error("Failed to find suitable memory type.");
     }
 
-    Buffer::Buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
+    Buffer::Buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties) : size{ size }
     {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -77,6 +59,21 @@ namespace Vulkan
         vkFreeMemory(State::getDevice(), bufferMemory, nullptr);
     }
 
+    void Buffer::storeData(void* data)
+    {
+        void* dst;
+        vkMapMemory(State::getDevice(), bufferMemory, 0, size, 0, &dst);
+        memcpy(dst, data, static_cast<size_t>(size));
+        vkUnmapMemory(State::getDevice(), bufferMemory);
+    }
+
+    void Buffer::copy(Buffer& buffer)
+    {
+        if (buffer.getSize() != size)
+            throw std::runtime_error("Tried to copy buffer with different size.");
+        copyBuffer(buffer.getBuffer(), this->buffer, size);
+    }
+
+    VkDeviceSize Buffer::getSize() { return size; }
     VkBuffer Buffer::getBuffer() { return buffer; }
-    VkDeviceMemory Buffer::getBufferMemory() { return bufferMemory; }
 }

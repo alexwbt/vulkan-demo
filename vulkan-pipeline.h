@@ -13,10 +13,11 @@ namespace Vulkan
 
         void create();
         void destroy();
-        void beginRenderPass(VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
 
         VkPipeline getPipeline();
+        VkPipelineLayout getLayout();
         VkRenderPass getRenderPass();
+        std::vector<VkFramebuffer>& getFramebuffers();
     private:
         VkPipeline pipeline;
         VkPipelineLayout layout;

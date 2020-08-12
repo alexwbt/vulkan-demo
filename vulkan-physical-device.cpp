@@ -45,8 +45,12 @@ namespace Vulkan
 
     bool isDeviceSuitable(VkPhysicalDevice physicalDevice)
     {
+        VkPhysicalDeviceFeatures supportedFeatures;
+        vkGetPhysicalDeviceFeatures(physicalDevice, &supportedFeatures);
+
         return findQueueFamilies(physicalDevice).isComplete()
-            && checkDeviceExtensionSupport(physicalDevice);
+            && checkDeviceExtensionSupport(physicalDevice)
+            && supportedFeatures.samplerAnisotropy;
     }
 
     PhysicalDevice::PhysicalDevice()

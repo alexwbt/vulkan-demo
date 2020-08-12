@@ -1,8 +1,8 @@
 #pragma once
 
 #include "vulkan-buffer.h"
+#include "vulkan-texture.h"
 
-#include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 
 #include <vector>
@@ -23,7 +23,7 @@ namespace Vulkan
         ~DescriptorSet();
 
         void createDescriptorPool();
-        void createDescriptorSets(std::vector<Buffer*>& uniformBuffers);
+        void createDescriptorSets(std::vector<Buffer*>& uniformBuffers, Texture& texture);
         void destroyDescriptorPool();
 
         void getDescriptorSet() {}

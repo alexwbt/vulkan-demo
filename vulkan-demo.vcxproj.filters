@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Vulkan">
+      <UniqueIdentifier>{782bbf90-1c3d-48e0-a97a-97107d57b4d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Vulkan">
+      <UniqueIdentifier>{fe00dfd6-e59f-44f9-a1a3-33a0258ba349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{0134b984-5ed9-4365-9dca-9b8c1f5e1839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{186f3e2f-2e98-465e-ae24-9a7ff9eebd5b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-instance.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-state.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-physical-device.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-surface.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-pipeline.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-swapchain.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-device.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-command-pool.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-vertex-buffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-renderer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-buffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-index-buffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-descriptor-set.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="camera-input.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-command-buffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-texture.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-image.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vulkan-instance.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-state.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-physical-device.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-surface.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="configuration-macro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-pipeline.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-swapchain.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-device.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-command-pool.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-vertex-buffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-renderer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-buffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-index-buffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-descriptor-set.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="camera-input.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-command-buffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-texture.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="vulkan-image.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

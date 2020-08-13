@@ -9,8 +9,9 @@ namespace Vulkan
     class Image
     {
     public:
+        static VkImageView createImageView(VkImage image, VkFormat format);
+
         Image(std::string path, VkFormat format);
-        Image(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
         ~Image();
 
         void transitionImageLayout(VkCommandBuffer commandBuffer, VkImageLayout oldLayout, VkImageLayout newLayout);

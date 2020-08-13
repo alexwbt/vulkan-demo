@@ -74,7 +74,7 @@ namespace Vulkan
 
         imageViews.resize(imageCount);
         for (uint32_t i = 0; i < imageCount; i++)
-            imageViews[i] = new ImageView(images[i], imageFormat);
+            imageViews[i] = Image::createImageView(images[i], imageFormat);
     }
 
     Swapchain::Swapchain()
@@ -141,8 +141,8 @@ namespace Vulkan
 
     void Swapchain::destroy()
     {
-        for (ImageView* imageView : imageViews)
-            delete imageView;
+        for (VkImageView imageView : imageViews)
+            vkDestroyImageView(State::getDevice(), imageView, nullptr);
         vkDestroySwapchainKHR(State::getDevice(), swapchain, nullptr);
     }
 
@@ -150,5 +150,5 @@ namespace Vulkan
     VkFormat Swapchain::getImageFormat() { return imageFormat; }
     VkExtent2D Swapchain::getExtent() { return extent; }
     size_t Swapchain::getImageCount() { return images.size(); }
-    VkImageView Swapchain::getImageView(int i) { return imageViews[i]->getImageView(); }
+    VkImageView Swapchain::getImageView(int i) { return imageViews[i]; }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vulkan-image-view.h"
+#include "vulkan-image.h"
 
 #include <vector>
 
@@ -25,7 +25,7 @@ namespace Vulkan
         VkFormat imageFormat;
         VkExtent2D extent;
         std::vector<VkImage> images;
-        std::vector<ImageView*> imageViews;
+        std::vector<VkImageView> imageViews;
 
         void retrieveImagesAndCreateImageViews();
     };

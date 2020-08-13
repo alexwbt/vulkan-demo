@@ -19,6 +19,7 @@ namespace Vulkan
         stbi_image_free(pixels);
 
         createImage(VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        view = createImageView(image, format);
 
         CommandBuffer commandBuffer(1, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         transitionImageLayout(commandBuffer.getBuffer(0), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -27,12 +28,6 @@ namespace Vulkan
         commandBuffer.end();
         commandBuffer.submit();
         commandBuffer.wait();
-    }
-
-    Image::Image(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
-        : width(width), height(height), format(format)
-    {
-        createImage(tiling, usage, properties);
     }
 
     Image::~Image()
@@ -70,7 +65,11 @@ namespace Vulkan
         if (vkAllocateMemory(State::getDevice(), &allocInfo, nullptr, &memory) != VK_SUCCESS)
             throw std::runtime_error("Failed to allocate image memory.");
         vkBindImageMemory(State::getDevice(), image, memory, 0);
+    }
 
+    VkImageView Image::createImageView(VkImage image, VkFormat format)
+    {
+        VkImageView view;
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
@@ -83,6 +82,7 @@ namespace Vulkan
         viewInfo.subresourceRange.layerCount = 1;
         if (vkCreateImageView(State::getDevice(), &viewInfo, nullptr, &view) != VK_SUCCESS)
             throw std::runtime_error("Failed to create image view.");
+        return view;
     }
 
     void Image::transitionImageLayout(VkCommandBuffer commandBuffer, VkImageLayout oldLayout, VkImageLayout newLayout)

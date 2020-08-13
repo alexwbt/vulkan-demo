@@ -4,6 +4,7 @@
 #include "window.h"
 #include "camera.h"
 #include "camera-input.h"
+#include "model.h"
 
 #include <chrono>
 #include <iostream>
@@ -30,24 +31,10 @@ int main()
         Camera camera;
         CameraInput cameraInput(Window::window, camera);
 
-        std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-            {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-            {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-            {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-
-            {{-0.5f, -0.5f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-            {{0.5f, -0.5f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-            {{0.5f, 0.5f, -1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-            {{-0.5f, 0.5f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
-        };
-        std::vector<uint16_t> indices = {
-            0, 1, 2, 2, 3, 0,
-            4, 5, 6, 6, 7, 4
-        };
-        VertexBuffer vertexBuffer(vertices);
-        IndexBuffer indexBuffer(indices);
-        Texture texture("textures/texture.jpg", VK_FORMAT_R8G8B8A8_SRGB);
+        Model model("models/viking_room.obj");
+        VertexBuffer vertexBuffer(model.vertices);
+        IndexBuffer indexBuffer(model.indices);
+        Texture texture("textures/viking_room.png", VK_FORMAT_R8G8B8A8_SRGB);
         Renderer renderer(commandBuffer, vertexBuffer, indexBuffer, texture, camera);
 
         float fpsCounter = 0;

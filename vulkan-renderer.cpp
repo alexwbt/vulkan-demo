@@ -132,7 +132,7 @@ namespace Vulkan
             VkDeviceSize offsets[] = { 0 };
             vkCmdBindVertexBuffers(cb, 0, 1, vertexBuffers, offsets);
 
-            vkCmdBindIndexBuffer(cb, indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
+            vkCmdBindIndexBuffer(cb, indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
             vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, State::pipelineObj()->getLayout(), 0, 1, &descriptorSets[i], 0, nullptr);
 
@@ -185,11 +185,11 @@ namespace Vulkan
 
     void Renderer::updateUniformBuffer(uint32_t currentImage) {
         UniformBufferObject ubo{};
-        // ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+        ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        // ubo.model = glm::translate(ubo.model, glm::vec3(0.0f, 0.0f, 0.0f));
         // ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ubo.view = camera.viewMatrix;
-        ubo.projection = glm::perspective(glm::radians(camera.fov), Window::width / (float)Window::height, 0.1f, 10.0f);
+        ubo.projection = glm::perspective(glm::radians(camera.fov), Window::width / (float)Window::height, 0.001f, 100.0f);
         ubo.projection[1][1] *= -1;
         ubo.pvm = ubo.projection * ubo.view * ubo.model;
 

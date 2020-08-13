@@ -9,12 +9,12 @@ namespace Vulkan
     class IndexBuffer
     {
     public:
-        IndexBuffer(std::vector<uint16_t>& indices);
+        IndexBuffer(std::vector<uint32_t>& indices);
 
         VkBuffer getBuffer();
-        std::vector<uint16_t>& getIndices();
+        std::vector<uint32_t>& getIndices();
     private:
         Buffer buffer;
-        std::vector<uint16_t>& indices;
+        std::vector<uint32_t>& indices;
     };
 }

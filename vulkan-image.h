@@ -9,6 +9,7 @@ namespace Vulkan
     class Image
     {
     public:
+        Image(std::string path, VkFormat format);
         Image(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
         ~Image();
 
@@ -17,12 +18,12 @@ namespace Vulkan
 
         VkImageView getView();
     private:
-        uint32_t width, height;
+        int width, height, channels;
         VkImage image;
         VkDeviceMemory memory;
         VkFormat format;
         VkImageView view;
-    };
 
-    Image loadImage(std::string path, VkFormat format);
+        void createImage(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
+    };
 }

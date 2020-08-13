@@ -13,7 +13,7 @@ namespace Vulkan
         VkImageView getImageView();
         VkSampler getSampler();
     private:
-        Image* image;
+        Image image;
         VkSampler sampler;
 
         void createSampler();

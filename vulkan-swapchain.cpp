@@ -74,7 +74,7 @@ namespace Vulkan
 
         imageViews.resize(imageCount);
         for (uint32_t i = 0; i < imageCount; i++)
-            imageViews[i] = Image::createImageView(images[i], imageFormat);
+            imageViews[i] = Image::createImageView(images[i], imageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
     }
 
     Swapchain::Swapchain()

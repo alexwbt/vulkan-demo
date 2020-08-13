@@ -31,4 +31,5 @@ namespace Vulkan
     STATE_GETTER_SETTER(DescriptorSet, descriptorSet, void);
     STATE_GETTER_SETTER(Pipeline, pipeline, VkPipeline);
     STATE_GETTER_SETTER(CommandPool, commandPool, VkCommandPool);
+    STATE_GETTER_SETTER(DepthImage, depthImage, Image&);
 }

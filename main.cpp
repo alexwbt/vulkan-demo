@@ -22,6 +22,7 @@ int main()
         Device device;
         Swapchain swapchain;
         DescriptorSet descriptorSet;
+        DepthImage depthImage;
         Pipeline pipeline;
         CommandPool commandPool;
         CommandBuffer commandBuffer(swapchain.getImageCount(), 0);

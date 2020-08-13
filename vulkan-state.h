@@ -10,6 +10,7 @@
 #include "vulkan-descriptor-set.h"
 #include "vulkan-pipeline.h"
 #include "vulkan-command-pool.h"
+#include "vulkan-depth-image.h"
 
 #include <set>
 #include <vector>
@@ -42,6 +43,7 @@ namespace Vulkan
         STATE_GETTER_SETTER_H(DescriptorSet, descriptorSet, void);
         STATE_GETTER_SETTER_H(Pipeline, pipeline, VkPipeline);
         STATE_GETTER_SETTER_H(CommandPool, commandPool, VkCommandPool);
+        STATE_GETTER_SETTER_H(DepthImage, depthImage, Image&);
 
     private:
         static Instance* instance;
@@ -52,5 +54,6 @@ namespace Vulkan
         static DescriptorSet* descriptorSet;
         static Pipeline* pipeline;
         static CommandPool* commandPool;
+        static DepthImage* depthImage;
     };
 }

@@ -4,7 +4,7 @@
 namespace Vulkan
 {
     Texture::Texture(std::string path, VkFormat format)
-        : image(path, format)
+        : image(path, format, VK_IMAGE_ASPECT_COLOR_BIT)
     {
         createSampler();
     }

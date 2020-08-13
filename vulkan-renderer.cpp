@@ -109,16 +109,18 @@ namespace Vulkan
         std::vector<VkFramebuffer>& framebuffers = State::pipelineObj()->getFramebuffers();
         for (size_t i = 0; i < commandBuffer.getSize(); i++)
         {
+            std::array<VkClearValue, 2> clearValues{};
+            clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+            clearValues[1].depthStencil = { 1.0f, 0 };
+
             VkRenderPassBeginInfo renderPassInfo{};
             renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
             renderPassInfo.renderPass = State::pipelineObj()->getRenderPass();
             renderPassInfo.framebuffer = framebuffers[i];
             renderPassInfo.renderArea.offset = { 0, 0 };
             renderPassInfo.renderArea.extent = State::swapchainObj()->getExtent();
-
-            VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-            renderPassInfo.clearValueCount = 1;
-            renderPassInfo.pClearValues = &clearColor;
+            renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+            renderPassInfo.pClearValues = clearValues.data();
 
             VkCommandBuffer cb = commandBuffer.getBuffer(i);
 
@@ -151,8 +153,11 @@ namespace Vulkan
         commandBuffer.free();
         State::commandPoolObj()->destroy();
         State::pipelineObj()->destroy();
+        State::getDepthImage().destroy();
+        State::getDepthImage().setSize(Window::width, Window::height);
         State::swapchainObj()->destroy();
         State::swapchainObj()->create();
+        State::getDepthImage().create();
         State::pipelineObj()->create();
         State::commandPoolObj()->create();
         commandBuffer.allocate();

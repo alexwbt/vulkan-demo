@@ -90,6 +90,12 @@
     <ClCompile Include="vulkan-image.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="vulkan-depth-image.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="vulkan-depth-image.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vulkan-instance.h">

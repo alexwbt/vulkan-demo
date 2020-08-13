@@ -6,8 +6,8 @@
 
 namespace Vulkan
 {
-    Image::Image(std::string path, VkFormat format)
-        : format(format)
+    Image::Image(std::string path, VkFormat format, VkImageAspectFlags aspectFlags)
+        : format(format), aspectFlags(aspectFlags)
     {
         stbi_uc* pixels = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
         if (!pixels) throw std::runtime_error("Failed to load texture image.");
@@ -18,8 +18,11 @@ namespace Vulkan
 
         stbi_image_free(pixels);
 
-        createImage(VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-        view = createImageView(image, format);
+        tiling = VK_IMAGE_TILING_OPTIMAL;
+        usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+        properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+        createImage();
+        createImageView();
 
         CommandBuffer commandBuffer(1, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         transitionImageLayout(commandBuffer.getBuffer(0), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -30,14 +33,37 @@ namespace Vulkan
         commandBuffer.wait();
     }
 
+    Image::Image(int width, int height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImageAspectFlags aspectFlags)
+        : width(width), height(height), format(format), tiling(tiling), usage(usage), properties(properties), aspectFlags(aspectFlags)
+    {
+        create();
+    }
+
     Image::~Image()
+    {
+        destroy();
+    }
+
+    void Image::setSize(int width, int height)
+    {
+        this->width = width;
+        this->height = height;
+    }
+
+    void Image::create()
+    {
+        createImage();
+        createImageView();
+    }
+
+    void Image::destroy()
     {
         vkDestroyImageView(State::getDevice(), view, nullptr);
         vkDestroyImage(State::getDevice(), image, nullptr);
         vkFreeMemory(State::getDevice(), memory, nullptr);
     }
 
-    void Image::createImage(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
+    void Image::createImage()
     {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -67,7 +93,12 @@ namespace Vulkan
         vkBindImageMemory(State::getDevice(), image, memory, 0);
     }
 
-    VkImageView Image::createImageView(VkImage image, VkFormat format)
+    void Image::createImageView()
+    {
+        view = createImageView(image, format, aspectFlags);
+    }
+
+    VkImageView Image::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
     {
         VkImageView view;
         VkImageViewCreateInfo viewInfo{};
@@ -75,7 +106,7 @@ namespace Vulkan
         viewInfo.image = image;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
         viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = 1;
         viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -138,6 +169,11 @@ namespace Vulkan
         region.imageExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1 };
 
         vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    }
+
+    VkFormat Image::getFormat()
+    {
+        return format;
     }
 
     VkImageView Image::getView()

@@ -148,13 +148,14 @@ namespace Vulkan
             glfwWaitEvents();
         vkDeviceWaitIdle(State::getDevice());
         State::descriptorSetObj()->destroyDescriptorPool();
+        commandBuffer.free();
         State::commandPoolObj()->destroy();
         State::pipelineObj()->destroy();
         State::swapchainObj()->destroy();
         State::swapchainObj()->create();
         State::pipelineObj()->create();
         State::commandPoolObj()->create();
-        commandBuffer.reallocate();
+        commandBuffer.allocate();
         destroyUniformBuffer();
         createUniformBuffer();
         State::descriptorSetObj()->createDescriptorPool();

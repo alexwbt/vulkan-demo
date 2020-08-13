@@ -9,7 +9,6 @@ namespace Vulkan
 
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = State::getCommandPool();
         allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
 
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -25,6 +24,7 @@ namespace Vulkan
 
     void CommandBuffer::allocate()
     {
+        allocInfo.commandPool = State::getCommandPool();
         if (vkAllocateCommandBuffers(State::getDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
             throw std::runtime_error("Failed to allocate command buffers.");
 
@@ -36,12 +36,6 @@ namespace Vulkan
     void CommandBuffer::free()
     {
         vkFreeCommandBuffers(State::getDevice(), State::getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-    }
-
-    void CommandBuffer::reallocate()
-    {
-        free();
-        allocate();
     }
 
     void CommandBuffer::wait()

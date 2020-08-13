@@ -12,7 +12,8 @@ namespace Vulkan
         CommandBuffer(int count, VkCommandBufferUsageFlags flags);
         ~CommandBuffer();
 
-        void reallocate();
+        void allocate();
+        void free();
         void wait();
         void end();
         void end(int index);
@@ -28,8 +29,5 @@ namespace Vulkan
 
         VkCommandBufferAllocateInfo allocInfo{};
         VkCommandBufferBeginInfo beginInfo{};
-
-        void allocate();
-        void free();
     };
 }

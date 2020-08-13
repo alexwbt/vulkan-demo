@@ -46,7 +46,7 @@ int main()
         };
         VertexBuffer vertexBuffer(vertices);
         IndexBuffer indexBuffer(indices);
-        Texture texture("textures/texture2.jpg", VK_FORMAT_R8G8B8A8_SRGB);
+        Texture texture("textures/texture.jpg", VK_FORMAT_R8G8B8A8_SRGB);
         Renderer renderer(commandBuffer, vertexBuffer, indexBuffer, texture, camera);
 
         float fpsCounter = 0;

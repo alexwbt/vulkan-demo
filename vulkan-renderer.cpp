@@ -2,7 +2,7 @@
 #include "vulkan-state.h"
 #include "vulkan-renderer.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 
 namespace Vulkan
 {

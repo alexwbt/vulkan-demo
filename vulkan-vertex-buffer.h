@@ -2,7 +2,7 @@
 
 #include "vulkan-buffer.h"
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include <vector>
 #include <array>
 

@@ -338,9 +338,3 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-
-glad/
-glfw-3.3.2.bin.WIN64/
-glm/
-
-glad.c

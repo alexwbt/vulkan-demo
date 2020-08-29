@@ -3,7 +3,7 @@
 #include "vulkan-buffer.h"
 #include "vulkan-texture.h"
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 #include <vector>
 
